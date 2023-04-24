@@ -96,7 +96,7 @@ listint_t *knuth_seq(size_t size)
 /**
  * free_seq - frees the linked list that contains the knuth sequence
  * @list - knuth sequence
- *
+ * @list: pointer to the head of the linked list to be freed
  * Return: nothing
  */
 void free_seq(listint_t *list)

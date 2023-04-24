@@ -1,115 +1,33 @@
 #include "sort.h"
-
 /**
- * swap - swaps two integers
- * @a: first input address
- * @b: second input address
+ * shell_sort -The function takes an array and its size as parameters,
+ * and sorts the array using the Shell sort algorithm
  *
- * Return: Nothing
+ * @array: The array to be sorted
+ * @size: The size of the array
  */
-void swap(int *a, int *b)
-{
-	int c;
 
-	c = *a;
-	*a = *b;
-	*b = c;
-}
-
-/**
- * shell_sort - quick sort algorithm
- * @array: array of integers to be sorted
- * @size: size of array
- *
- * Return: Nothing
- */
 void shell_sort(int *array, size_t size)
 {
-	listint_t *seq = NULL, *seqq;
-	int n;
-	long int j;
-	size_t i, k, a, c;
+	size_t gap = 1, i, j;
+	int tmp;
 
-	if (array == NULL || size <= 1)
+	if (!array || size < 2)
 		return;
-	seq = knuth_seq(size);
-	seqq = seq;
-	if (!seq)
-		return;
-	while (seq)
+	while (gap < size / 3)
+		gap = gap * 3 + 1;
+	while (gap)
 	{
-		n = seq->n;
-		for (k = 0; k < (size_t)n; k++)
+		for (j = gap; j < size; j++)
 		{
-			for (i = n + k; i < size; i += n)
+			tmp = array[j];
+			for (i = j; i >= gap && array[i - gap] > tmp; i -= gap)
 			{
-				a = i;
-				j = i - n;
-				c = 0;
-				while (j >= 0)
-				{
-					c++;
-					if (j < 0)
-						break;
-					if (array[i] >= array[j])
-						break;
-					swap(&array[i], &array[j]);
-					i -= n;
-					j -= n;
-				}
-				i = a;
+				array[i] = array[i - gap];
 			}
+			array[i] = tmp;
 		}
 		print_array(array, size);
-		seq = seq->next;
-	}
-	free(seqq);
-}
-
-/**
- * knuth_seq - Creates a doubly linked list of the required knuth sequence
- * @size: Size of the array requiring knuth sequencee
- *
- * Return: Pointer to the first element of the created list. NULL on failure
- */
-listint_t *knuth_seq(size_t size)
-{
-	listint_t *list, *node;
-	int k = 1, *tmp;
-
-	list = NULL;
-	while ((size / k) >= 2)
-	{
-		node = (listint_t *)malloc(sizeof(listint_t));
-		if (!node)
-			return (NULL);
-		node->prev = NULL;
-		node->next = list;
-	tmp = (int *)&node->n;
-		*tmp = k;
-		list = node;
-		k = (k * 3) + 1;
-	}
-	return (list);
-}
-
-/**
- * free_seq - frees the linked list that contains the knuth sequence
- * @list - knuth sequence
- * @list: pointer to the head of the linked list to be freed
- * Return: nothing
- */
-void free_seq(listint_t *list)
-{
-	listint_t *temp;
-
-	if (!list)
-		return;
-	temp = list;
-	while (list)
-	{
-		list = list->next;
-		free(temp);
-		temp = list;
+		gap /= 3;
 	}
 }
